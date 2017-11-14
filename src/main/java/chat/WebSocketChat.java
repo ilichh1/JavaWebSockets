@@ -35,6 +35,7 @@ public class WebSocketChat {
     @OnOpen
     public void onOpen(Session peer) {
         peers.add(peer);
+	System.out.println("Se conectio un nuevo cliente.");
     }
 
     @OnClose
