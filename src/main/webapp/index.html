@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Start Page</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <style>
+            div.row {
+                position: relative;
+                width: 100%;
+                padding: 8px;
+            }
+            div.row div {
+                display: inline-block;
+            }
+            div.row * textarea {
+                resize: none;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Char</h1>
+        
+        <div class="row">
+            
+            <div style="width: 25%">
+                <h3 class="title">Users</h3>
+                <textarea readonly id="users"  rows="10" >
+                    TO-DO
+                </textarea>
+            </div><div style="width: 75%">
+                
+                <h3 class="title">Chat Log</h3>
+                <textarea readonly id="messages"  rows="10" cols="50"></textarea>
+            </div>
+            
+        </div>
+        <!-- ./users & chat -->
+        
+        <div class="row">
+            <input id="message-input" name="message-input" type="text">
+            <button onclick="sendMessage()">Chat</button>
+        </div>
+        
+        <div class="row" id="main-log"></div>
+        
+        <script type="text/javascript">
+            // Connecto to the WebSocket
+            var wsUri = "ws://" + document.location.host + document.location.pathname + "chat";
+            var websocket = new WebSocket(wsUri);
+            var logger = document.getElementById("main-log");
+            var messageInput = document.getElementById("message-input");
+            var messageHolder = document.getElementById("messages");
+
+            websocket.onerror = function(evt) { onError(evt); };
+
+            function onError(evt) {
+                writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data);
+            }
+            
+            // For testing purposes
+            websocket.onopen = function(evt) { onOpen(evt); };
+
+            function writeToScreen(message) {
+                logger.innerHTML += message + "<br>";
+            }
+
+            function onOpen() {
+                writeToScreen("Connected to " + wsUri);
+            }
+            
+            function sendMessage() {
+                message = messageInput.value;
+                messageInput.value = "";
+                websocket.send(message);
+            }
+            // End test functions
+            
+            // Message event
+            websocket.onmessage = function (evt) {
+                //console.log(evt);
+                messageHolder.innerHTML += evt.data+"\n";
+            };
+        </script>
+        
+    </body>
+</html>
